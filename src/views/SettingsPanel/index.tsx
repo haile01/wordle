@@ -1,21 +1,24 @@
 import { Close } from '@mui/icons-material';
-import { Grow, IconButton, Paper, Switch, Typography } from '@mui/material';
+import { Grow, IconButton, Paper, Switch, Typography, FormControl, FormLabel, FormHelperText, TextField, Button, CircularProgress } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import React from 'react';
+import React, { useState } from 'react';
 
 const useStyles = makeStyles(theme => ({
-  container: {
+  placeholder: {
     position: "absolute",
     top: 0,
-    left: 0,
+    left: "50%",
+    transform: "translateX(-50%)",
+    width: 600,
+    height: "100%",
+    zIndex: 1,
+  },
+  container: {
     width: "100%",
+    maxWidth: "100vw",
     height: "100%",
   },
   content: {
-    width: 600,
-    maxWidth: "100vw",
-    height: "100%",
-    margin: "auto",
     padding: 10,
   },
   header: {
@@ -42,6 +45,11 @@ interface SettingsPanelProps {
   show: boolean,
   handleClose: () => void,
   handleModeChange: (mode: 'light' | 'dark') => void,
+  letterCount: number,
+  setLetterCount: (count: number) => void,
+  // rowCount: number,
+  // setRowCount: (count: number) => void,
+  startNewGame: (count: number) => Promise<void>,
 }
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({
@@ -49,31 +57,68 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
   show,
   handleClose,
   handleModeChange,
+  letterCount,
+  setLetterCount,
+  // rowCount,
+  // setRowCount,
+  startNewGame
 }) => {
   const styles = useStyles();
 
+  const [_letterCount, _setLetterCount] = useState(letterCount);
+  // const [_rowCount, _setRowCount] = useState(rowCount);
+  const [loading, setLoading] = useState(false);
+
+  const handleRestart = async () => {
+    setLetterCount(_letterCount);
+    // setRowCount(_rowCount);
+    setLoading(true);
+    await startNewGame(_letterCount);
+    setLoading(false);
+    handleClose();
+  }
+
   return (
-    <section style={{ display: show ? "auto" : "none" }} className={styles.container}>
+    <section style={{ display: show ? "initial" : "none" }} className={styles.placeholder}>
       <Grow in={show}>
-        <Paper className={styles.content}>
-          <header className={styles.header}>
-            <Typography style={{ fontWeight: "bold" }} variant="h5" color="text">
-              SETTINGS
-            </Typography>
-            <IconButton
-              style={{ position: "absolute" }}
-              className={styles.close}
-              onClick={handleClose}
-            >
-              <Close />
-            </IconButton>
-          </header>
-          <div className={styles.settings}>
-            <SettingsSwitch
-              title="Dark Theme"
-              value={mode === 'dark'}
-              handleChange={() => handleModeChange(mode === 'light' ? 'dark' : 'light')}
-            />
+        <Paper className={styles.container}>
+          <div className={styles.content}>
+            <header className={styles.header}>
+              <Typography style={{ fontWeight: "bold" }} variant="h5" color="text">
+                SETTINGS
+              </Typography>
+              <IconButton
+                style={{ position: "absolute" }}
+                className={styles.close}
+                onClick={handleClose}
+              >
+                <Close />
+              </IconButton>
+            </header>
+            <div className={styles.settings}>
+              <SettingsSwitch
+                title="Dark Theme"
+                value={mode === 'dark'}
+                handleChange={() => handleModeChange(mode === 'light' ? 'dark' : 'light')}
+              />
+              <SettingsInput
+                type="number"
+                title="Word length"
+                value={_letterCount}
+                handleChange={(e: React.ChangeEvent<HTMLInputElement>) => _setLetterCount(parseInt(e.target.value))}
+                inputProps={{
+                  max: 10,
+                  min: 5,
+                }}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleRestart}
+              >
+                Start new game {loading && <Grow in={loading}><CircularProgress size={24} /></Grow>}
+              </Button>
+            </div>
           </div>
         </Paper>
       </Grow>
@@ -83,12 +128,13 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
 const useSwitchStyles = makeStyles(theme => ({
   container: {
+    margin: "5px 0px",
+    padding: "5px 0px",
     borderBottom: "1px solid",
     display: "flex",
     flexFlow: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "5px 0px",
   }
 }))
 
@@ -107,7 +153,7 @@ const SettingsSwitch: React.FC<SettingsSwitchProps> = ({
 
   return (
     <div className={styles.container}>
-      <Typography variant="body1" color="text">
+      <Typography style={{ fontWeight: "bold" }} variant="h6" color="text">
         {title}
       </Typography>
       <Switch
@@ -115,6 +161,58 @@ const SettingsSwitch: React.FC<SettingsSwitchProps> = ({
         onChange={handleChange}
         color="primary"
       />
+    </div>
+  )
+}
+
+const useInputStyles = makeStyles(theme => ({
+  container: {
+    margin: "5px 0px",
+    padding: "5px 0px",
+    borderBottom: "1px solid",
+    width: "100%",
+    display: "flex",
+    flexFlow: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+}))
+
+interface SettingsInputProps {
+  type: string,
+  title: string,
+  value: any,
+  placeholder?: string,
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  inputProps?: any,
+}
+
+const SettingsInput: React.FC<SettingsInputProps> = ({
+  type,
+  title,
+  value,
+  placeholder,
+  handleChange,
+  inputProps
+}) => {
+
+  const styles = useInputStyles();
+  
+  return (
+    <div className={styles.container}>
+      <Typography style={{ fontWeight: "bold" }} variant="h6" color="text">
+        {title}
+      </Typography>
+      <FormControl>
+        <TextField
+          type="number"
+          value={value}
+          variant="outlined"
+          placeholder={placeholder || ""}
+          onChange={handleChange}
+          inputProps={inputProps}
+        />
+      </FormControl>
     </div>
   )
 }
