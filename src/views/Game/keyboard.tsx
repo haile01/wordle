@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexFlow: "column",
     rowGap: 5,
-    paddingBottom: 100,
+    paddingBottom: 50,
   },
   row: {
     display: 'flex',

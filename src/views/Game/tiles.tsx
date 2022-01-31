@@ -58,7 +58,7 @@ const useTileStyles = makeStyles(theme => ({
       transform: "scale(1)",
     },
   },
-  "@keyframes flip": {
+  "@keyframes flipIn": {
     "0%": {
       transform: "rotateX(-90deg)",
     },
@@ -66,20 +66,28 @@ const useTileStyles = makeStyles(theme => ({
       transform: "rotateX(0deg)",
     },
   },
+  "@keyframes flipOut": {
+    "0%": {
+      transform: "rotateX(0deg)",
+    },
+    "100%": {
+      transform: "rotateX(-90deg)",
+    },
+  },
   input: {
     animation: "$pop 0.1s ease-in-out",
     animationFillMode: "forwards",
   },
   wrong: {
-    animation: "$flip 0.3s ease-in-out",
+    animation: "$flipIn 0.3s ease-in-out",
     animationFillMode: "forwards",
   },
   partial: {
-    animation: "$flip 0.3s ease-in-out",
+    animation: "$flipIn 0.3s ease-in-out",
     animationFillMode: "forwards",
   },
   correct: {
-    animation: "$flip 0.3s ease-in-out",
+    animation: "$flipIn 0.3s ease-in-out",
     animationFillMode: "forwards",
   },
 }));
@@ -108,6 +116,7 @@ export const Tile: React.FC<TileProps> = ({
 
 interface StyledTileProps {
   letter?: string,
+  delay?: number,
 }
 
 export const EmptyTile: React.FC<StyledTileProps> = () => {
@@ -143,12 +152,13 @@ export const InputTile: React.FC<StyledTileProps> = ({
 
 export const WrongTile: React.FC<StyledTileProps> = ({
   letter,
+  delay = 0,
 }) => {
 
   const styles = useTileStyles();
 
   return (
-    <div className={styles.wrong}>
+    <div style={{ animationDelay: `${delay}ms` }} className={styles.wrong}>
       <TileComponent
         letter={letter}
         borderColor="#787c7e"
@@ -161,12 +171,13 @@ export const WrongTile: React.FC<StyledTileProps> = ({
 
 export const PartialTile: React.FC<StyledTileProps> = ({
   letter,
+  delay = 0,
 }) => {
 
   const styles = useTileStyles();
 
   return (
-    <div className={styles.partial}>
+    <div style={{ animationDelay: `${delay}ms` }} className={styles.partial}>
       <TileComponent
         letter={letter}
         borderColor="#c9b458"
@@ -179,12 +190,13 @@ export const PartialTile: React.FC<StyledTileProps> = ({
 
 export const CorrectTile: React.FC<StyledTileProps> = ({
   letter,
+  delay = 0,
 }) => {
 
   const styles = useTileStyles();
 
   return (
-    <div className={styles.correct}>
+    <div style={{ animationDelay: `${delay}ms` }} className={styles.correct}>
       <TileComponent
         letter={letter}
         borderColor="#6aaa64"

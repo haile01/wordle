@@ -8,6 +8,8 @@ import Words from './words';
 import { checkInvalid, getEmptyKeyState, getWord, str2Char, validate } from '../../lib/helpers';
 import Keyboard from './keyboard';
 import { Character } from '../../lib/types';
+import HelpPanel from '../HelpPanel';
+import StatsPanel from '../StatsPanel';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -49,7 +51,6 @@ const Game: React.FC<GameProps> = () => {
 
   const [keyword, setKeyword] = useState("force"); // TODO
   const [mode, setMode] = useState<'light' | 'dark'>('light');
-  const [openSettings, setOpenSettings] = useState(false);
   const [letterCount, setLetterCount] = useState(5);
   const [rowCount, setRowCount] = useState(6); // Currently still hardcoded
   const [words, setWords] = useState(new Array(rowCount).fill(""));
@@ -58,6 +59,9 @@ const Game: React.FC<GameProps> = () => {
   const [keyState, setKeyState] = useState(getEmptyKeyState);
   const [finished, setFinished] = useState(false);
   const [isInvalid, setIsInvalid] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false);
+  const [openHelp, setOpenHelp] = useState(false);
+  const [openStats, setOpenStats] = useState(false);
 
   const theme = useMemo(() => createTheme({ palette: { mode } }), [mode]);
 
@@ -135,10 +139,18 @@ const Game: React.FC<GameProps> = () => {
         // setRowCount={(count: number) => setRowCount(count)}
         startNewGame={startNewGame}
       />
+      <HelpPanel
+        show={openHelp}
+        handleClose={() => setOpenHelp(false)}
+      />
+      <StatsPanel
+        show={openStats}
+        handleClose={() => setOpenStats(false)}
+      />
       <Paper className={styles.container}>
         <header className={styles.header}>
           <div className={styles.headerSide}>
-            <IconButton>
+            <IconButton onClick={() => setOpenHelp(true)}>
               <Help fontSize="large" />
             </IconButton>
           </div>
@@ -151,11 +163,11 @@ const Game: React.FC<GameProps> = () => {
             WORDLE
           </Typography>
           <div className={styles.headerSide}>
-            <IconButton>
+            <IconButton onClick={() => setOpenStats(true)}>
               <Leaderboard fontSize="large" />
             </IconButton>
-            <IconButton>
-              <Settings fontSize="large" onClick={() => setOpenSettings(true)} />
+            <IconButton onClick={() => setOpenSettings(true)}>
+              <Settings fontSize="large" />
             </IconButton>
           </div>
         </header>
@@ -174,17 +186,15 @@ const Game: React.FC<GameProps> = () => {
             in={rowCount === currentRow || finished}
             mountOnEnter
           >
-            <Typography variant="h5" color="initial">
+            <Typography variant="h5" color="text">
               The answer is <b>{keyword.toUpperCase()}</b>
             </Typography>
           </Collapse>
-        </section>
-        <section>
           <Collapse
             in={isInvalid}
             mountOnEnter
           >
-            <Typography variant="h5" color="initial">
+            <Typography variant="h5" color="text">
               This word doesn't belong to the wordlist
             </Typography>
           </Collapse>
