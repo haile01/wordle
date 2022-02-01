@@ -1,5 +1,6 @@
 import { makeStyles } from '@mui/styles';
 import React from 'react';
+import { validate } from '../../lib/helpers';
 import { EmptyTile, InputTile, Tile } from './tiles';
 
 const useStyles = makeStyles(theme => ({
@@ -40,47 +41,49 @@ const Words: React.FC<WordsProps> = ({
   return (
     <section className={styles.container}>
       {
-        words.map((row, index) => (
-          <div key={index} className={styles.row}>
-            {
-              index < currentRow ? (
-                row.split("").map((letter, i) => (
-                  <Tile
-                    key={i}
-                    letter={letter}
-                    position={i}
-                    word={keyword}
-                  />
-                ))
-              ) : 
-              index === currentRow ? (
-                <>
-                  {
-                    currentInput.split("").map((letter, i) => (
-                      <InputTile
-                        key={i}
-                        letter={letter}
-                      />
-                    ))
-                  }
-                  {
-                    new Array(letterCount - currentInput.length).fill("").map((_, i) => (
-                      <EmptyTile
-                        key={i}
-                      />
-                    ))
-                  }
-                </>
-              ) : (
-                new Array(letterCount).fill("").map((_, i) => (
-                  <EmptyTile
-                    key={i}
-                  />
-                ))
-              )
-            }
-          </div>
-        ))
+        words.map((row, index) => {
+          const verdict = validate(row, keyword);
+          return (
+            <div key={index} className={styles.row}>
+              {
+                index < currentRow ? (
+                  row.split("").map((letter, i) => (
+                    <Tile
+                      key={i}
+                      letter={letter}
+                      state={verdict[i]}
+                    />
+                  ))
+                ) : 
+                index === currentRow ? (
+                  <>
+                    {
+                      currentInput.split("").map((letter, i) => (
+                        <InputTile
+                          key={i}
+                          letter={letter}
+                        />
+                      ))
+                    }
+                    {
+                      new Array(letterCount - currentInput.length).fill("").map((_, i) => (
+                        <EmptyTile
+                          key={i}
+                        />
+                      ))
+                    }
+                  </>
+                ) : (
+                  new Array(letterCount).fill("").map((_, i) => (
+                    <EmptyTile
+                      key={i}
+                    />
+                  ))
+                )
+              }
+            </div>
+          )
+        })
       }
     </section>
   )

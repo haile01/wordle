@@ -45,13 +45,33 @@ export const getEmptyKeyState = (): KeyState => {
   }
 }
 
-export const validate = (c: string, position: number, word: string) => {
-  if (word.indexOf(c) === -1)
-    return 1;
-  else if (word.indexOf(c) !== position)
-    return 2;
-  else
-    return 3;
+export const validate = (word: string, ans: string): Array<number> => {
+  const res = new Array(word.length).fill(1); // verdict for each letter in `word`
+  const mark = new Array(ans.length).fill(false); // whether or not a letter in `ans` have been matched to a letter in `word`
+  word.split('').forEach((letter, ind) => {
+    if (letter === ans[ind]) {
+      res[ind] = 3;
+      mark[ind] = true;
+    }
+  });
+  word.split('').forEach((letter, ind) => {
+    if (res[ind] !== 1)
+      return;
+
+    let found = false;
+    ans.split('').forEach((letter2, ind2) => {
+      if (found)
+        return;
+      if (letter === letter2 && !mark[ind2]) {
+        res[ind] = 2;
+        mark[ind2] = true;
+        found = true;
+      }
+    });
+  });
+
+  console.log(word, ans, res);
+  return res;
 }
 
 export const getWord = async (length: number) => {
@@ -63,4 +83,41 @@ export const checkInvalid = async (word: string) => {
   const length = word.length;
   const list = (await axios.get(`https://gist.githubusercontent.com/haile01/f917b3a349d22796ba08427068bdf034/raw/f91e3d330607ad1ef3f061300adcc21cfa9e87c6/${length}.txt`)).data.split('\n');
   return list.indexOf(word) === -1;
+}
+
+export interface Stats {
+  played: number,
+  winCount: number,
+  currentStreak: number,
+  maxStreak: number,
+  distribution: Array<number>,
+}
+
+export const saveStats = (stats: Stats) => {
+  const data = JSON.stringify(stats);
+  localStorage.setItem('stats', data);
+}
+
+export const loadStats = (): Stats => {
+  const data = localStorage.getItem('stats');
+  const defaultStats: Stats = {
+    played: 0,
+    winCount: 0,
+    currentStreak: 0,
+    maxStreak: 0,
+    distribution: new Array(6).fill(0),
+  };
+
+  if (!data || data === "") {
+    return defaultStats
+  }
+  else {
+    try {
+      return JSON.parse(data);
+    }
+    catch (e) {
+      console.error(e);
+      return defaultStats;
+    }
+  }
 }

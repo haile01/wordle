@@ -1,6 +1,5 @@
 import { makeStyles } from '@mui/styles';
 import React from 'react';
-import { validate } from '../../lib/helpers';
 
 const useTileComponentStyles = makeStyles(theme => ({
   container: {
@@ -94,21 +93,18 @@ const useTileStyles = makeStyles(theme => ({
 
 interface TileProps {
   letter: string,
-  position: number,
-  word: string,
+  state: number,
 }
 
 export const Tile: React.FC<TileProps> = ({
   letter,
-  position,
-  word
+  state,
 }) => {
-  const res = validate(letter, position, word);
-  if (res === 1)
+  if (state === 1)
     return <WrongTile letter={letter} />;
-  else if (res === 2)
+  else if (state === 2)
     return <PartialTile letter={letter} />;
-  else if (res === 3)
+  else if (state === 3)
     return <CorrectTile letter={letter} />;
   else
     return <></>

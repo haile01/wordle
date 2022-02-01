@@ -1,5 +1,5 @@
 import { Close } from '@mui/icons-material';
-import { Grow, IconButton, Paper, Switch, Typography, FormControl, FormLabel, FormHelperText, TextField, Button, CircularProgress } from '@mui/material';
+import { Grow, IconButton, Paper, Switch, Typography, FormControl, TextField, Button, CircularProgress } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import React, { useState } from 'react';
 
@@ -116,7 +116,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 color="primary"
                 onClick={handleRestart}
               >
-                Start new game {loading && <Grow in={loading}><CircularProgress size={24} /></Grow>}
+                Start new game {loading && <Grow in={loading}><CircularProgress color="primary" size={24} /></Grow>}
               </Button>
             </div>
           </div>

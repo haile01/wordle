@@ -25,10 +25,16 @@ const useStyles = makeStyles(theme => ({
 
 interface KeyboardProps {
   keyState: KeyState,
+  handleAddLetter: (letter: string) => void,
+  handleRemoveLetter: () => void,
+  handleSubmit: () => Promise<void>,
 }
 
 const Keyboard: React.FC<KeyboardProps> = ({
   keyState,
+  handleAddLetter,
+  handleRemoveLetter,
+  handleSubmit
 }) => {
 
   const styles = useStyles();
@@ -41,6 +47,7 @@ const Keyboard: React.FC<KeyboardProps> = ({
             key={i}
             letter={letter}
             state={keyState[str2Char(letter)] || 0}
+            onClick={() => handleAddLetter(letter)}
           />
         ))}
       </div>
@@ -50,6 +57,7 @@ const Keyboard: React.FC<KeyboardProps> = ({
               key={i}
               letter={letter}
               state={keyState[str2Char(letter)] || 0}
+              onClick={() => handleAddLetter(letter)}
             />
           ))}
       </div>
@@ -57,18 +65,21 @@ const Keyboard: React.FC<KeyboardProps> = ({
         <Key
           letter={"enter"}
           state={0}
+          onClick={handleSubmit}
         />
         {'zxcvbnm'.split('').map((letter, i) => (
           <Key
             key={i}
             letter={letter}
             state={keyState[str2Char(letter)] || 0}
+            onClick={() => handleAddLetter(letter)}
           />
         ))}
         <Key
           icon={<Backspace />}
           letter={""}
           state={0}
+          onClick={handleRemoveLetter}
         />
       </div>
     </div>
@@ -79,12 +90,14 @@ interface KeyProps {
   state: number,
   letter: string,
   icon?: React.ReactNode,
+  onClick: () => void,
 }
 
 const Key: React.FC<KeyProps> = ({
   state,
   letter,
-  icon
+  icon,
+  onClick,
 }) => {
   const styles = useStyles();
 
@@ -101,6 +114,7 @@ const Key: React.FC<KeyProps> = ({
         fontSize: 15,
       }}
       className={styles.key}
+      onClick={onClick}
     >
       {icon ? icon : letter.toUpperCase()}
     </Button>

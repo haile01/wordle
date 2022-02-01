@@ -150,6 +150,9 @@ const HelpPanel: React.FC<HelpPanelProps> = ({
               <Typography variant="body1" color="text">
                 <b>Note: currently all the keywords doesn't have multiple duplicating letters</b>
               </Typography>
+              <Typography variant="body1" color="text">
+                Wordlist is scraped from <b><a style={{ textDecoration: "none" }} href="https://openbase.com/js/word-list-json" target="_blank" rel="noopener noreferrer">word-list-json</a></b>
+              </Typography>
             </div>
           </div>
         </Paper>
